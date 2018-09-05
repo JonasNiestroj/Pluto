@@ -14,8 +14,10 @@ SECTION .text
 extern kernel_main
 GLOBAL _main
 
+
 _main:
-    cli ;disable all interupts
+    cli ; clear all interupts
+
     mov esp, kernel_stack
     call kernel_main ;call our kernel main
     jmp _loop
