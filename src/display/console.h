@@ -9,4 +9,6 @@
 
 void print(char character);
 
+void printstring(char characters[]);
+
 #endif

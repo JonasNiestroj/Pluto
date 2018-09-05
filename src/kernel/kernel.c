@@ -2,6 +2,6 @@
 
 void kernel_main()
 {
-    print('h');
+    printstring("hello world");
     return;
 }
