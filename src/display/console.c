@@ -5,9 +5,19 @@ static int actualHeight = 0;
 
 void print(char character)
 {
-    unsigned short c = (unsigned short)character | (0x0F) << 8;
-    *(unsigned short *)(VGA_START + actualWidth * 2) = c;
-    actualWidth++;
+    switch (character)
+    {
+    case '\n':
+        actualHeight++;
+        actualWidth = 0;
+        break;
+    default:
+    {
+        unsigned short c = (unsigned short)character | (0x0F) << 8;
+        *(unsigned short *)(VGA_START + actualHeight * 2 * WIDTH + actualWidth * 2) = c;
+        actualWidth++;
+    }
+    }
 }
 
 void printstring(char characters[])

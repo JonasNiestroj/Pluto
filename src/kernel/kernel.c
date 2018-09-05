@@ -2,6 +2,6 @@
 
 void kernel_main()
 {
-    printstring("hello world");
+    printstring("h\ne\nl\nl\no\n \nw\no\nr\nl\nd");
     return;
 }
