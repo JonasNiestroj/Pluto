@@ -12,13 +12,30 @@ ALIGN 4
 
 SECTION .text
 extern kernel_main
+extern gdtsize
+extern gdt
 GLOBAL _main
 
-
 _main:
-    cli ; clear all interupts
-
+    cli ; clean interrupts
     mov esp, kernel_stack
+
+    ; Load GDT
+    sub esp, 6
+    mov cx, [gdtsize]
+    mov [esp+0], cx
+    mov ecx, gdt
+    mov [esp+2], ecx
+    lgdt [esp]
+    add esp, 6
+    
+    mov cx, 0x10
+    mov ds, cx
+    mov es, cx
+    mov fs, cx
+    mov gs, cx
+    mov ss, cx
+
     call kernel_main ;call our kernel main
     jmp _loop
 
