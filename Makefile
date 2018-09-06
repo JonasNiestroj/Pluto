@@ -3,7 +3,7 @@ ASFLAGS=-f elf32
 CC=gcc
 CFLAGS=-ffreestanding -fno-stack-protector -fno-pie -m32 -O0 -c
 LDFLAGS=-melf_i386
-KERNOBJ=src/boot/bootloader.o src/kernel/kernel.o src/display/console.o src/architecture/gdt.o
+KERNOBJ=src/boot/bootloader.o src/kernel/kernel.o src/display/console.o src/architecture/gdt.o src/architecture/idt.o src/architecture/interrupts.o src/architecture/trampoline.o
 
 all: Pluto.iso
 
@@ -35,6 +35,9 @@ src/kernel/%.o: src/kernel/%.c
 
 src/display/%.o: src/display/%.c
 	$(CC) $(CFLAGS) $< -o $@
+
+src/architecture/trampoline.o: src/architecture/trampoline.asm
+	$(AS) $(ASFLAGS) src/architecture/trampoline.asm -o src/architecture/trampoline.o
 
 src/architecture/%.o: src/architecture/%.c
 	$(CC) $(CFLAGS) $< -o $@
