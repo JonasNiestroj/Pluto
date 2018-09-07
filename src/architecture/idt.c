@@ -1,4 +1,5 @@
 #include "idt.h"
+#include "../display/console.h"
 
 IDT idttable[256];
 
@@ -13,13 +14,15 @@ void call(unsigned int base, unsigned short limit)
                          : "rN"(limit), "r"(base));
 }
 
-void memset(unsigned char *s, unsigned char c, unsigned int n)
+void memset(void *_s, int _c, unsigned int n)
 {
+    unsigned char *s = _s;
+    unsigned char c = _c;
     while (n--)
     {
         *s++ = c;
     }
-    return s;
+    return _s;
 }
 
 void idtinit()
@@ -77,6 +80,10 @@ void idtinit()
     idt_set_handler(&idttable[47], irq15, IDTINTERRUPT, 0x0);
 
     call((unsigned int)idttable, sizeof(idttable) - 1);
+
+    printstring("IDT intialized");
+
+    return;
 }
 
 void idt_set_handler(IDT *entry, void (*handler)(void), unsigned char type, unsigned char access)
@@ -86,4 +93,5 @@ void idt_set_handler(IDT *entry, void (*handler)(void), unsigned char type, unsi
     entry->zerobyte = 0;
     entry->type = IDTPRESENT | access << 5 | type;
     entry->offset_high = (unsigned int)handler >> 16 & 0xFFFF;
+    return;
 }

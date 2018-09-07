@@ -14,11 +14,19 @@ SECTION .text
 extern kernel_main
 extern gdtsize
 extern gdt
+extern tss
 GLOBAL _main
 
 _main:
     cli ; clean interrupts
     mov esp, kernel_stack
+
+    mov ecx, tss
+    mov [gdt + 0x28 + 2], cx
+    shr ecx, 16
+    mov [gdt + 0x28 + 4], cl
+    shr ecx, 8
+    mov [gdt + 0x28 + 7], cl
 
     ; Load GDT
     sub esp, 6
@@ -28,7 +36,9 @@ _main:
     mov [esp+2], ecx
     lgdt [esp]
     add esp, 6
+    jmp 0x08:l1
     
+l1:
     mov cx, 0x10
     mov ds, cx
     mov es, cx
@@ -36,10 +46,13 @@ _main:
     mov gs, cx
     mov ss, cx
 
+    mov cx, (0x28|0x3)
+    ltr cx
+
     call kernel_main ;call our kernel main
-    jmp _loop
 
 _loop:
+    cli
     hlt
     jmp _loop
 

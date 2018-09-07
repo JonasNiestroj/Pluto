@@ -1,4 +1,5 @@
 #include "interrupts.h"
+#include "pic.h"
 
 static void (*interrupthandler[16])();
 
@@ -9,29 +10,49 @@ void interruptinit()
     {
         interrupthandler[i] = (void *)0;
     }
+    return;
 }
 
 void setinterrupt(unsigned char interruptnumber, void (*handler)())
 {
     interrupthandler[interruptnumber] = handler;
+    return;
 }
 
-void interruptrelay(interruptstruct *interrupt)
+void interruptrelay(interruptstruct *irt)
 {
-    if (interrupt->int_no > 31 && interrupt->int_no < 48)
+    if (irt->int_no < 32)
     {
-        // IRQs
-        if (interrupthandler[interrupt->int_no - 32] != (void *)0)
+        // ISRs
+        if (interrupthandler[irt->int_no] != (void *)0)
         {
-            interrupthandler[interrupt->int_no - 32]();
+            print('b');
+            interrupthandler[irt->int_no]();
         }
     }
     else
     {
-        // ISRs
-        if (interrupthandler[interrupt->int_no] != (void *)0)
+        // IRQs
+        if (irt->int_no - 32 == 7 && !(picgetisr() & (1 << 7)))
         {
-            interrupthandler[interrupt->int_no]();
+            return;
         }
+
+        if (irt->int_no - 32 == 15 && !(picgetisr() & (1 << 15)))
+        {
+            return;
+        }
+        if (interrupthandler[irt->int_no - 32] != (void *)0)
+        {
+            interrupthandler[irt->int_no - 32]();
+        }
+
+        if (irt->int_no > 7)
+        {
+            picendslave();
+        }
+        picendmaster();
     }
+
+    return;
 }

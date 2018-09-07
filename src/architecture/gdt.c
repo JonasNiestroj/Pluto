@@ -7,7 +7,8 @@ struct tssentry tss = {
     .cs = 0x08,
     .ds = 0x13,
     .fs = 0x13,
-    .gs = 0x13};
+    .gs = 0x13,
+};
 
 struct gdtentry gdt[] =
     {

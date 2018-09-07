@@ -13,14 +13,6 @@
         jmp prepare
 %endmacro
 
-%macro irq 1
-    GLOBAL irq%1:function
-    irq%1:
-        push dword 0
-        push dword %1+32
-        jmp prepare
-%endmacro
-
 ; Find better solution
 isr 0
 isr 1
@@ -54,6 +46,14 @@ isr 28
 isr 29
 isrerror 30
 isr 31
+
+%macro irq 1
+    GLOBAL irq%1:function
+    irq%1:
+        push dword 0
+        push dword %1+32
+        jmp prepare
+%endmacro
 
 irq 0
 irq 1
