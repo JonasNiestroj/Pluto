@@ -7,7 +7,10 @@ char rawbuffer[128] = {0};
 char asciibuffer[128] = {0};
 unsigned char current_position = 0;
 unsigned char *keyboardbuffer = (void *)0;
-char *rows[] = {"qwertzuiop", "asdfghjkl", "yxcvbnm"};
+char *lowercaserows[] = {"qwertzuiop", "asdfghjkl", "yxcvbnm"};
+char *uppercaserows[] = {"QWERTZUIOP", "ASDFGHJKL", "YXCVBNM"};
+unsigned char caps = 0;
+unsigned char shift = 0;
 
 void keyboardinit()
 {
@@ -46,21 +49,60 @@ char *getascii()
         {
             break;
         }
-        if (key == 0x1C)
+        // Capslock
+        if (key == 0x3A)
         {
-            asciibuffer[i] == '\n';
+            if (caps == 0)
+            {
+                caps = 1;
+            }
+            else
+            {
+                caps = 0;
+            }
         }
-        else if (key >= 0x10 & key <= 0x1C)
+        // Enter key
+        else if (key == 0x1C)
         {
-            asciibuffer[i] = rows[0][key - 0x10];
+            asciibuffer[i] = '\n';
+        }
+        // Space
+        else if (key == 0x39)
+        {
+            asciibuffer[i] = ' ';
+        }
+        else if (key >= 0x10 & key <= 0x19)
+        {
+            if (caps == 0)
+            {
+                asciibuffer[i] = lowercaserows[0][key - 0x10];
+            }
+            else
+            {
+                asciibuffer[i] = uppercaserows[0][key - 0x10];
+            }
         }
         else if (key >= 0x1E && key <= 0x26)
         {
-            asciibuffer[i] = rows[1][key - 0x1E];
+            if (caps == 0)
+            {
+                asciibuffer[i] = lowercaserows[1][key - 0x1E];
+            }
+            else
+            {
+                asciibuffer[i] = uppercaserows[1][key - 0x1E];
+            }
         }
         else if (key >= 0x2C && key <= 0x32)
         {
-            asciibuffer[i] = rows[2][key - 0x2C];
+            if (caps == 0)
+            {
+                asciibuffer[i] = lowercaserows[2][key - 0x2C];
+            }
+            else
+            {
+                asciibuffer[i] = uppercaserows[2][key - 0x2C];
+            }
         }
         else
         {
